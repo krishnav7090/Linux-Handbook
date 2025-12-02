@@ -1,3 +1,6 @@
+Perfect. I will now **insert every script directly under each section** in your README — clean, simple, and perfect for live video demos.
+
+Here is your **updated README with all scripts included**.
 
 ---
 
@@ -13,7 +16,6 @@ It serves as a complete guide for DevOps engineers working with Linux servers, c
 📁 File system & permission management
 📊 Monitoring & troubleshooting
 🔥 Production-ready configurations (systemd, firewall, logrotate, SSH)
-
 
 ---
 
@@ -65,78 +67,267 @@ linux-handbook/
 
 # 🧩 Level 1 – Basic (Foundational Linux Administration)
 
-### 👤 Users & Groups
+---
 
-* Create users & groups → **[create_users.sh](level-1-basic/users/create_users.sh)**
-* Sudoers example → **[alice-dev](level-1-basic/users/sudoers/alice-dev)**
+## 👤 Users & Groups
 
-### 📂 Directory Permissions
+### 📌 Script: `create_users.sh`
 
-* Setup project directories → **[setup_project_dirs.sh](level-1-basic/permissions/setup_project_dirs.sh)**
+```bash
+#!/bin/bash
 
-### 📦 Package Installation
+sudo groupadd devteam
 
-* Install Git, Nginx, Java → **[install_packages.sh](level-1-basic/packages/install_packages.sh)**
+for user in dev1 dev2 dev3; do
+    sudo useradd -m -G devteam $user
+    echo "User $user created and added to devteam"
+done
+```
+
+### 📌 Sudoers Example (`alice-dev`)
+
+```
+alice ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart nginx
+```
+
+---
+
+## 📂 Directory Permissions
+
+### 📌 Script: `setup_project_dirs.sh`
+
+```bash
+#!/bin/bash
+
+sudo mkdir -p /project/app/{logs,config}
+
+sudo groupadd projectgrp
+sudo chgrp -R projectgrp /project/app
+
+sudo chmod -R 770 /project/app
+echo "Project directories configured."
+```
+
+---
+
+## 📦 Package Installation
+
+### 📌 Script: `install_packages.sh`
+
+```bash
+#!/bin/bash
+
+sudo apt update -y
+sudo apt install git nginx default-jdk -y
+
+echo "Installed Git, Nginx, and Java."
+```
 
 ---
 
 # 🧱 Level 2 – Intermediate (Daily DevOps Operations)
 
-### ⏱ Cron Jobs & Automation
+---
 
-* Backup script → **[backup_myapp.sh](level-2-intermediate/cron/backup_myapp.sh)**
-* Log cleanup → **[cleanup_logs.sh](level-2-intermediate/cron/cleanup_logs.sh)**
-* Application health check → **[app_health.sh](level-2-intermediate/cron/app_health.sh)**
-* Crontab examples → **[crontab_examples.txt](level-2-intermediate/cron/crontab_examples.txt)**
+## ⏱ Cron Jobs & Automation
 
-### 📑 Log Management
+### 📌 Script: `backup_myapp.sh`
 
-* Understanding `/var/log` → **[log_management_notes.md](level-2-intermediate/logs/log_management_notes.md)**
+```bash
+#!/bin/bash
 
-### 📊 System Monitoring
+tar -czf /backups/myapp_$(date +%F).tar.gz /var/www/myapp
+echo "Backup completed."
+```
 
-* Top commands for troubleshooting → **[monitoring_commands.md](level-2-intermediate/monitoring/monitoring_commands.md)**
+---
+
+### 📌 Script: `cleanup_logs.sh`
+
+```bash
+#!/bin/bash
+
+find /var/log/myapp/ -type f -mtime +7 -delete
+echo "Old logs cleaned."
+```
+
+---
+
+### 📌 Script: `app_health.sh`
+
+```bash
+#!/bin/bash
+
+if systemctl is-active --quiet myapp; then
+    echo "App is running."
+else
+    echo "App is DOWN!" | mail -s "myapp Alert" admin@example.com
+fi
+```
+
+---
+
+### 📌 Crontab Examples (`crontab_examples.txt`)
+
+```
+0 2 * * * /scripts/backup_myapp.sh
+0 */6 * * * /scripts/app_health.sh
+0 0 * * 0 /scripts/cleanup_logs.sh
+```
+
+---
+
+## 📑 Log Management
+
+### 📌 File: `log_management_notes.md`
+
+```
+Important log directories:
+/var/log/syslog
+/var/log/auth.log
+/var/log/nginx/
+/var/log/mysql/
+
+Use journalctl for systemd:
+journalctl -u nginx
+journalctl -xe
+```
+
+---
+
+## 📊 System Monitoring
+
+### 📌 File: `monitoring_commands.md`
+
+```
+top
+htop
+vmstat
+iostat
+free -h
+df -h
+ss -tulnp
+```
 
 ---
 
 # 🔥 Level 3 – Advanced (Production-Ready Linux Administration)
 
-### ⚙️ Systemd Service
+---
 
-* Systemd unit → **[myapp.service](level-3-advanced/systemd/myapp.service)**
-* App startup script → **[start.sh](level-3-advanced/systemd/start.sh)**
+## ⚙️ Systemd Service
 
-### 🔐 SSH Hardening
+### 📌 File: `myapp.service`
 
-* Recommended SSH settings → **[sshd_config_changes.txt](level-3-advanced/ssh-hardening/sshd_config_changes.txt)**
-* Add authorized SSH key → **[add_authorized_key.sh](level-3-advanced/ssh-hardening/add_authorized_key.sh)**
+```
+[Unit]
+Description=My Application
+After=network.target
 
-### 💾 LVM Storage
+[Service]
+ExecStart=/usr/local/bin/start.sh
+Restart=always
+User=root
 
-* LVM setup → **[lvm_setup_commands.sh](level-3-advanced/lvm/lvm_setup_commands.sh)**
+[Install]
+WantedBy=multi-user.target
+```
 
-### 🔥 Firewall Rules
+### 📌 Script: `start.sh`
 
-* UFW configuration → **[ufw_rules.sh](level-3-advanced/firewall/ufw_rules.sh)**
-* nftables configuration → **[nftables_rules.sh](level-3-advanced/firewall/nftables_rules.sh)**
+```bash
+#!/bin/bash
+echo "Starting application..."
+python3 /opt/myapp/app.py
+```
 
-### 🌀 Log Rotation
+---
 
-* Logrotate config → **[myapp.logrotate](level-3-advanced/logrotate/myapp.logrotate)**
+## 🔐 SSH Hardening
+
+### 📌 File: `sshd_config_changes.txt`
+
+```
+PermitRootLogin no
+PasswordAuthentication no
+AllowUsers dev1 dev2 sahith
+```
+
+### 📌 Script: `add_authorized_key.sh`
+
+```bash
+#!/bin/bash
+
+USER=$1
+mkdir -p /home/$USER/.ssh
+cat key.pub >> /home/$USER/.ssh/authorized_keys
+
+chmod 600 /home/$USER/.ssh/authorized_keys
+chown -R $USER:$USER /home/$USER/.ssh
+```
+
+---
+
+## 💾 LVM Storage
+
+### 📌 Script: `lvm_setup_commands.sh`
+
+```bash
+pvcreate /dev/xvdb
+vgcreate datavg /dev/xvdb
+lvcreate -L 5G -n datalv datavg
+mkfs.ext4 /dev/datavg/datalv
+mount /dev/datavg/datalv /data
+```
+
+---
+
+## 🔥 Firewall Rules
+
+### 📌 Script: `ufw_rules.sh`
+
+```bash
+#!/bin/bash
+
+ufw allow 22
+ufw allow 80
+ufw allow 443
+ufw enable
+```
+
+---
+
+### 📌 Script: `nftables_rules.sh`
+
+```bash
+#!/bin/bash
+nft add table inet filter
+nft add chain inet filter input { type filter hook input priority 0 ; }
+nft add rule inet filter input tcp dport 22 accept
+nft add rule inet filter input tcp dport 80 accept
+```
+
+---
+
+## 🌀 Log Rotation
+
+### 📌 Config: `myapp.logrotate`
+
+```
+/var/log/myapp/*.log {
+    daily
+    rotate 7
+    compress
+    missingok
+}
+```
 
 ---
 
 # ⚙️ How to Run Scripts
 
-Make a script executable:
-
-```bash
-chmod +x script.sh
 ```
-
-Run:
-
-```bash
+chmod +x script.sh
 ./script.sh
 ```
 
@@ -144,9 +335,7 @@ Run:
 
 # 📌 GitHub Upload Steps
 
-Push this assignment to your **linux-handbook** branch:
-
-```bash
+```
 git checkout linux-handbook
 git add .
 git commit -m "Added Linux handbook with scripts and documentation"
@@ -157,19 +346,21 @@ git push origin linux-handbook
 
 # 🧠 Useful Linux Commands
 
-| Purpose               | Command                    |
-| --------------------- | -------------------------- |
-| Check disk usage      | `df -h`                    |
-| Check memory usage    | `free -m`                  |
-| Check CPU load        | `top`, `htop`              |
-| View open ports       | `ss -tulnp`                |
-| List running services | `systemctl --type=service` |
-| Logs                  | `journalctl -xe`           |
+| Purpose    | Command                    |
+| ---------- | -------------------------- |
+| Disk usage | `df -h`                    |
+| Memory     | `free -m`                  |
+| CPU load   | `top`, `htop`              |
+| Ports      | `ss -tulnp`                |
+| Services   | `systemctl --type=service` |
+| Logs       | `journalctl -xe`           |
 
 ---
-
 
 # 👨‍💻 Author
 
 **Sahith**
-DevOps Engineer | Linux 
+DevOps Engineer | Linux
+
+---
+
