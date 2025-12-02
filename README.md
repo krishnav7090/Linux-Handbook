@@ -1,6 +1,3 @@
-Perfect. I will now **insert every script directly under each section** in your README — clean, simple, and perfect for live video demos.
-
-Here is your **updated README with all scripts included**.
 
 ---
 
